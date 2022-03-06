@@ -1,0 +1,6 @@
+QWidget{
+    background: rgb(28, 63, 77);
+}
+QLabel{
+    font-size: 30px;
+}
