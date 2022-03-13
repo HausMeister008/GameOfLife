@@ -22,7 +22,6 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
         self.btn_stopCalc.clicked.connect(self.stopCalc)
         
         self.thread = {}
-        self.thread[1] = ThreadClass(parent=None, index = 1)
     
     def calc_next_gen(self):
         new_pop = []
@@ -100,6 +99,7 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
     def startCalc(self):
         self.calculating = True
         print('start calculating')
+        self.thread[1] = ThreadClass(parent=None, index = 1)
         self.thread[1].start()
         self.thread[1].any_signal.connect(self.calc_next_gen)
         self.btn_startCalc.setEnabled(False)
