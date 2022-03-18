@@ -1,3 +1,4 @@
+from email.charset import QP
 from uiFiles.GameOfLifeWindow import Ui_MainWindow
 from PySide6 import QtSql, QtGui
 from PySide6.QtWidgets import *
@@ -59,15 +60,20 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
     def update_canvas(self):
         try:
             for line_index, line in enumerate(self.population):
-                canvas_line:list[QFrame] = self.wdgt_gameOfLife.findChildren(ContainingFrame)[line_index].findChildren(QFrame)
+                canvas_line:list[QPushButton] = self.wdgt_gameOfLife.findChildren(ContainingFrame)[line_index].findChildren(QPushButton)
                 for subject_index, subject in enumerate(line):
-                    canvas_subject:QFrame = canvas_line[subject_index]
+                    canvas_subject:QPushButton = canvas_line[subject_index]
                     if subject:
-                        canvas_subject.setStyleSheet("background: #ddd;")
+                        canvas_subject.setStyleSheet(f"background: #ddd; width: {700/size}px; height: {700/size}px; border:none;")
                     else:
-                        canvas_subject.setStyleSheet("background: #000;")
+                        canvas_subject.setStyleSheet(f"background: #000; width: {700/size}px; height: {700/size}px; border:none;")
         except Exception:
             print('pass')
+    
+    def change_state(self, Xindex, Yindex):
+        print(f"change state {self.population[Yindex][Xindex]}, {Yindex}, {Xindex}")
+        self.population[Yindex][Xindex] = 0 if self.population[Yindex][Xindex] == 1 else 1
+        self.update_canvas()
     
     def draw(self):
         print('drawing')
@@ -77,20 +83,24 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
                 w = item.widget()
                 if w:
                    w.deleteLater()
-        for line in self.population:
-            
+        # policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        # policy.setHeightForWidth(True)
+        # containingFrame_H.setSizePolicy(policy)
+        for Yindex, line in enumerate(self.population):
             containingFrame_H = ContainingFrame()
+            
             horizontalLayout = QHBoxLayout(containingFrame_H)
             horizontalLayout.setSpacing(0)
             horizontalLayout.setContentsMargins(0, 0, 0, 0)
             
-            for subject in line:
-                new_subject = QFrame(containingFrame_H)
+            for Xindex, subject in enumerate(line):
+                new_subject:QPushButton = QPushButton(containingFrame_H)
                 if subject == 1:
-                    new_subject.setStyleSheet("background: #ddd;")
+                    new_subject.setStyleSheet(f"background: #ddd; width: {700/size}px; height: {700/size}px; border:none;")
                     # new_subject.setStyleSheet("background: #ddd; border:1px solid black;")
                 else:
-                    new_subject.setStyleSheet("background:black;")
+                    new_subject.setStyleSheet(f"background:black; width: {700/size}px; height: {700/size}px; border:none;")
+                new_subject.clicked.connect(lambda x=Xindex, y=Yindex: self.change_state(x, y))
                 horizontalLayout.addWidget(new_subject)
         
             self.verticalLayout_3.addWidget(containingFrame_H)
@@ -121,7 +131,7 @@ class ThreadClass(QThread):
     def run(self):
         print('Starting Thread...', self.index)
         while self.is_running:
-            time.sleep(.1)
+            time.sleep(.01*size)
             self.any_signal.emit()
             
     def stop(self):
@@ -130,27 +140,28 @@ class ThreadClass(QThread):
     
     
 
-length = 10 #random.randint(10, 30)
-liste = [[random.randint(0, 1) for x in range(length)] for y in range(length)]
+size = 50 #random.randint(10, 30)
+liste = [[0 for x in range(size)] for y in range(size)]
+print(len(liste), len(liste[0]))
 
-liste = [[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+# liste = [[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+#          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
 # liste = [[1,0,0,0],[0,1,1,0],[1,1,0,0], [0,0,0,0]]
 

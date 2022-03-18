@@ -23,6 +23,11 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(700, 750)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"")
@@ -57,7 +62,6 @@ class Ui_MainWindow(object):
         self.btn_stopCalc.setObjectName(u"btn_stopCalc")
         self.btn_stopCalc.setMinimumSize(QSize(0, 50))
         font = QFont()
-        font.setFamilies([u"Calibri"])
         font.setPointSize(25)
         font.setBold(True)
         self.btn_stopCalc.setFont(font)
@@ -68,10 +72,7 @@ class Ui_MainWindow(object):
         self.btn_startCalc.setObjectName(u"btn_startCalc")
         self.btn_startCalc.setMinimumSize(QSize(100, 50))
         self.btn_startCalc.setMaximumSize(QSize(16777215, 50))
-        font1 = QFont()
-        font1.setPointSize(25)
-        font1.setBold(True)
-        self.btn_startCalc.setFont(font1)
+        self.btn_startCalc.setFont(font)
 
         self.horizontalLayout.addWidget(self.btn_startCalc)
 
