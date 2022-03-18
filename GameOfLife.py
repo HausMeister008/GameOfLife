@@ -64,9 +64,9 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
                 for subject_index, subject in enumerate(line):
                     canvas_subject:QPushButton = canvas_line[subject_index]
                     if subject:
-                        canvas_subject.setStyleSheet(f"background: #ddd; width: {700/size}px; height: {700/size}px; border:none;")
+                        canvas_subject.setStyleSheet(f"background: #ddd; width: {window_size/field_size}px; height: {window_size/field_size}px; border:none;")
                     else:
-                        canvas_subject.setStyleSheet(f"background: #000; width: {700/size}px; height: {700/size}px; border:none;")
+                        canvas_subject.setStyleSheet(f"background: #000; width: {window_size/field_size}px; height: {window_size/field_size}px; border:none;")
         except Exception:
             print('pass')
     
@@ -96,10 +96,10 @@ class GameOfLife(QMainWindow, Ui_MainWindow):
             for Xindex, subject in enumerate(line):
                 new_subject:QPushButton = QPushButton(containingFrame_H)
                 if subject == 1:
-                    new_subject.setStyleSheet(f"background: #ddd; width: {700/size}px; height: {700/size}px; border:none;")
+                    new_subject.setStyleSheet(f"background: #ddd; width: {window_size/field_size}px; height: {window_size/field_size}px; border:none;")
                     # new_subject.setStyleSheet("background: #ddd; border:1px solid black;")
                 else:
-                    new_subject.setStyleSheet(f"background:black; width: {700/size}px; height: {700/size}px; border:none;")
+                    new_subject.setStyleSheet(f"background:black; width: {window_size/field_size}px; height: {window_size/field_size}px; border:none;")
                 new_subject.clicked.connect(lambda x=Xindex, y=Yindex: self.change_state(x, y))
                 horizontalLayout.addWidget(new_subject)
         
@@ -131,7 +131,7 @@ class ThreadClass(QThread):
     def run(self):
         print('Starting Thread...', self.index)
         while self.is_running:
-            time.sleep(.01*size)
+            time.sleep(.01*field_size)
             self.any_signal.emit()
             
     def stop(self):
@@ -140,8 +140,8 @@ class ThreadClass(QThread):
     
     
 
-size = 50 #random.randint(10, 30)
-liste = [[0 for x in range(size)] for y in range(size)]
+field_size = 50 #random.randint(10, 30)
+liste = [[0 for x in range(field_size)] for y in range(field_size)]
 print(len(liste), len(liste[0]))
 
 # liste = [[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -170,6 +170,7 @@ print(len(liste), len(liste[0]))
 app = QApplication()
 MainWindow = GameOfLife(liste)
 MainWindow.setStyleSheet(open('./styleMain.css', encoding='utf-8').read())
+window_size = MainWindow.width()
 MainWindow.show()
 MainWindow.draw()
 app.exec()
